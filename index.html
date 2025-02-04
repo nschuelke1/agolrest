@@ -25,8 +25,9 @@
       "esri/Graphic",
       "esri/layers/GraphicsLayer",
       "esri/layers/FeatureLayer",
-      "esri/widgets/Editor"
-    ], function(esriConfig, Map, MapView, BasemapGallery, Expand, Basemap, VectorTileLayer, TileLayer, Locate, Search, Graphic, GraphicsLayer, FeatureLayer, Editor) {
+      "esri/widgets/Editor",
+      "esri/widgets/Legend"
+    ], function(esriConfig, Map, MapView, BasemapGallery, Expand, Basemap, VectorTileLayer, TileLayer, Locate, Search, Graphic, GraphicsLayer, FeatureLayer, Editor, Legend) {
       
       // API Key
       esriConfig.apiKey = "AAPK2cb19acc98eb406b80346e85af5aa1ffagWp07_WJVQlFAY2XL6xGrQ86USz9K6UzB1OaBd37PTIlYdHTo04S0-F9ETbr-dC";
@@ -218,13 +219,13 @@
         family: "Noto Sans",
         style: "italic",
         weight: "normal"
-    }
-  },
-  labelPlacement: "above-center",
-  labelExpressionInfo: {
-    expression: "$feature.Fac_Name"
-  }
-};
+      }
+      },
+      labelPlacement: "above-center",
+      labelExpressionInfo: {
+      expression: "$feature.Fac_Name"
+      }
+      };
 
       // Create the airport feature layer
       const airport = new FeatureLayer({
@@ -245,15 +246,33 @@
       map.add(airport);
 
 
-      //adding the const for the feature layer
+
+      // Define the myAirports labels
+      const myAirportsLabel = {
+        symbol: {
+          type: "text",
+          color: "#FFFFFF",
+          haloColor: "#5E8D74",
+          haloSize: "2px",
+          font: {
+            size: "12px",
+            family: "Noto Sans",
+            style: "italic",
+            weight: "normal"
+      }
+      },
+        labelPlacement: "below-center",
+        labelExpressionInfo: {
+          expression: "$feature.Fac_Name"
+      }
+      };
+
+      // Create the myAirports feature layer
       const myAirports = new FeatureLayer({
         url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Airports_I_have_Been_To/FeatureServer",
- 
-        //adding the popup here
         outFields: ["AirportCode"],
-
+        labelingInfo: [myAirportsLabel] //adding the labels
       });
-
         //adding the feature layer to the map
       map.add(myAirports);
 
@@ -271,6 +290,16 @@
 
       // Add the widget to the view
       view.ui.add(editor, "top-right");
+
+
+        // Create the Legend widget
+      const legend = new Legend({
+        view: view
+      });
+
+      // Add the Legend widget to the bottom-right corner of the view
+      view.ui.add(legend, "bottom-right");
+
 
 
       // Add the Locate widget
